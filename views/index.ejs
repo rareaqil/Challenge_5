@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Hello</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <h1>Hello</h1>
+    <form method="get">
+      <input type="text" name="plate" placeholder="insert plate number">
+      <button type="submit">Search</button>
+    </form>
+    <h1>Search Result</h1>
+    <% if (!cars.length) { %>
+      <h2>No Result</h2>
+    <% } %>
+    <ul>
+      <% cars.forEach(function(car){ %>
+        <li> Plate:  <%- car.plate %> </li>
+      <% }); %>
+    </ul>
+  </body>
+</html>
