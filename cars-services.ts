@@ -13,15 +13,22 @@ export class CarsService {
   }
 
   init() {
-    this.app.get("/", this.getMany);
-    this.app.post("/", this.create);
-    this.app.get("/:id", this.getOne);
-    this.app.patch("/:id", this.patch);
-    this.app.delete("/:id", this.delete);
+    this.app.get("/", this.home);
+    this.app.get("/cars", this.getMany);
+    // this.app.post("cars/", this.create);
+    this.app.get("/cars/:id", this.getOne);
+    this.app.patch("/cars/:id", this.patch);
+    this.app.delete("/cars/:id", this.delete);
+  }
+
+  async home(req: Request, res: Response) {
+    // const { plate } = req.query;
+    res.render("home");
   }
 
   async getMany(req: Request, res: Response) {
-    const { plate } = req.query;
+    // const { plate } = req.query;
+    const { plate, transmission, capacity, availableAt } = req.query;
     const key = `cars:${JSON.stringify(req.query)}`;
     const carsCache = await redis.getex(key);
     if (carsCache) {
@@ -32,6 +39,18 @@ export class CarsService {
       if (plate) {
         qCars.where("plate", "like", `%${plate}%`);
       }
+
+      console.log(`TRANSMISSION ${transmission}`);
+      if (transmission) {
+        qCars.where("transmission", `${transmission}`);
+      }
+      // if (capacity) {
+      //   qCars.where("capacity", parseInt(capacity, 10));
+      // }
+
+      // if (availableAt) {
+      //   qCars.where("availableAt", ">=", new Date(availableAt).toISOString());
+      // }
 
       const cars = await qCars;
       await redis.setex(key, 10, JSON.stringify(cars));
