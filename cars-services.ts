@@ -28,7 +28,7 @@ export class CarsService {
   }
 
   async cars(req: Request, res: Response) {
-    const { transmision, date, time, jml_penumpang } = req.query;
+    const { transmision, tanggal, waktu, jml_penumpang } = req.query;
     const key = `cars:${JSON.stringify(req.query)}`;
     const carsCache = await redis.getex(key);
     if (carsCache) {
@@ -44,10 +44,13 @@ export class CarsService {
       if (jml_penumpang) {
         qCars.where("capacity", ">=", `${jml_penumpang}`);
       }
-
-      // if (availableAt) {
-      //   qCars.where("availableAt", ">=", new Date(availableAt).toISOString());
-      // }
+      console.log(`DATE ${tanggal} WAKTU ${waktu}`);
+      // if 2023-11-11 03:41:17.586+00
+      // if (tanggal && waktu) {
+      //   const dateTimeString = `${tanggal} ${waktu}:00`; // Assuming the time format is HH:mm
+      //   const timestamp = new Date(dateTimeString).getTime();
+      //   qCars.where("availableAt", "<=", timestamp);
+      // } KOK GA BISA :'
 
       const cars = await qCars;
       await redis.setex(key, 10, JSON.stringify(cars));
